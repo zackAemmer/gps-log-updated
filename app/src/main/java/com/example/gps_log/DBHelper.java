@@ -9,8 +9,8 @@ import android.content.Context;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "tracksHMM.db";
-    public static final int DATABASE_VERSION = 10;
+    public static final String DATABASE_NAME = "transitInterference.db";
+    public static final int DATABASE_VERSION = 1;
 
     public static final String TABLE_TRACKS = "tracks";
     public static final String COLUMN_DEVID = "devID";
@@ -20,7 +20,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SPEED = "speed";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_SENT = "sent";
-    public static final String COLUMN_TOSEND = "toSend";
 
     public static final String TABLE_CREATE =
             "CREATE TABLE " +TABLE_TRACKS +" (" +
@@ -30,8 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     COLUMN_LON +" TEXT, " +
                     COLUMN_SPEED +" TEXT, " +
                     COLUMN_TIME +" TEXT, " +
-                    COLUMN_SENT +" INT, " +
-                    COLUMN_TOSEND +" INT " +
+                    COLUMN_SENT +" INT" +
                     ")";
 
     public DBHelper(Context context) {

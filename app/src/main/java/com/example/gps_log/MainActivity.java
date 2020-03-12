@@ -2,7 +2,6 @@ package com.example.gps_log;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,7 +31,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,23 +38,28 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     final int UNSTARTED = 0;
-    final int WAITINGFORDATA = 1;
-    final int STARTED = 2;
+    final int STARTED = 1;
     final String CHANNEL_ID = "App Running Notification";
     final String SERVER_URL = "";
 
-    Button startButton;
-    Button stopButton;
-    Button mapsButton;
+    Button startTncButton;
+    Button stopTncButton;
+    Button startBikeButton;
+    Button stopBikeButton;
+    Button startPedButton;
+    Button stopPedButton;
+    Button startCommercialButton;
+    Button stopCommercialButton;
+    Button beginTrackingButton;
+    Button endTrackingButton;
 
-    example.busrecoverytimes.TrackOperations trackOperations;
+    com.example.gps_log.TrackOperations trackOperations;
     RequestQueue requestQueue;
     NotificationManagerCompat notificationManager;
     NotificationCompat.Builder notificationBuilder;
     LocationManager locationManager;
     LocationListener locationListener;
 
-    int lastHiddenState = 3; //Start at 3 to always send the first track
     int startStatus = UNSTARTED;
     private long tripNum;
 
@@ -65,9 +68,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startButton = (Button) findViewById(R.id.start_logging);
-        stopButton = (Button) findViewById(R.id.stop_logging);
-        mapsButton = (Button) findViewById(R.id.go_to_map);
+        startTncButton = (Button) findViewById(R.id.start_tnc);
+        stopTncButton = (Button) findViewById(R.id.stop_tnc);
+        startBikeButton = (Button) findViewById(R.id.start_bike);
+        stopBikeButton = (Button) findViewById(R.id.stop_bike);
+        startPedButton = (Button) findViewById(R.id.start_ped);
+        stopPedButton = (Button) findViewById(R.id.stop_ped);
+        startCommercialButton = (Button) findViewById(R.id.start_commercial);
+        stopCommercialButton = (Button) findViewById(R.id.stop_commercial);
 
         //Set up tools needed to track, store, and send location data
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -75,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             //GPS is not enabled - prompt user
         }
         requestQueue = Volley.newRequestQueue(this);
-        trackOperations = new example.busrecoverytimes.TrackOperations(getApplicationContext());
+        trackOperations = new com.example.gps_log.TrackOperations(getApplicationContext());
         trackOperations.openDatabase();
         tripNum = trackOperations.getNextTrip();
         //Prompt user for GPS permission if it is not already given
@@ -92,37 +100,28 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         //Provide functionality for buttons based on the current tracking state
-        startButton.setOnClickListener(new View.OnClickListener() {
+        beginTrackingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (startStatus) {
                     case UNSTARTED:
-                        startButton.setText("Unstarted");
-                        startStatus = WAITINGFORDATA;
+                        beginTrackingButton.setText("Started");
+                        startStatus = STARTED;
                         tripNum = trackOperations.getNextTrip() + 1;
                         startService(new Intent(getBaseContext(), LocationService.class));
                         break;
-                    case WAITINGFORDATA:
-                        stopService(new Intent(getBaseContext(), LocationService.class));
-                        startButton.setText("Unstarted");
-                        startStatus = UNSTARTED;
-                        break;
                     case STARTED:
+                        stopService(new Intent(getBaseContext(), LocationService.class));
                         locationManager.removeUpdates(locationListener);
                         sendDataToServer(trackOperations.getUnsentTracks(), SERVER_URL);
                         trackOperations.markAllTracksSent();
-                        startButton.setText("Unstarted");
+                        beginTrackingButton.setText("Unstarted");
                         startStatus = UNSTARTED;
                         break;
                 }
             }
         });
-        mapsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: Make the tracks show with google maps
-            }
-        });
+
     }
 
     //Verifies connection to the url, then uses Volley to send the JSON object via POST to that url

@@ -12,9 +12,8 @@ public class Track {
     private String speed;
     private String time;
     private int sent; // 0:no 1:yes
-    private int toSend;
 
-    public Track(String devid, int tripid, String lat, String lon, String speed, String time, int sent, int toSend) {
+    public Track(String devid, int tripid, String lat, String lon, String speed, String time, int sent) {
         this.devID = devid;
         this.tripID = tripid;
         this.lat = lat;
@@ -22,7 +21,6 @@ public class Track {
         this.speed = speed;
         this.time = time;
         this.sent = sent;
-        this.toSend = toSend;
     }
 
     public Track() {
@@ -83,9 +81,7 @@ public class Track {
         this.sent = sent;
     }
 
-    public int getToSend() { return toSend; }
 
-    public void setToSend(int toSend) { this.toSend = toSend; }
 
     @Override
     public String toString() {
@@ -95,7 +91,6 @@ public class Track {
                 " lon : " +getLon() +
                 " speed: " +getSpeed() +
                 " time: " +getTime() +
-                " sent: " +getSent() +
-                " toSend: " +getToSend();
+                " sent: " +getSent();
     }
 }

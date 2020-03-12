@@ -14,22 +14,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class LocationService extends Service {
-    final int TRUE = 1;
-    final int FALSE = 0;
-    final int ACCELERATION = 1;
-    final int FREEFLOW = 2;
-    final int STOPPED = 0;
-    private int currentState = 3; //Always send first track
-    private int previousState = 3;
-
     private static final String TAG = "GPSService";
     final String CHANNEL_ID = "App Running Notification";
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 2000;
     private static final float LOCATION_DISTANCE = 0;
     private int tripNum;
-    private example.busrecoverytimes.TrackOperations trackOperations = new example.busrecoverytimes.TrackOperations(this);
-    private HMMClassifier hmmClassifier = new HMMClassifier();
+    private com.example.gps_log.TrackOperations trackOperations = new com.example.gps_log.TrackOperations(this);
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -43,8 +34,6 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location)
         {
-            previousState = currentState;
-            currentState = hmmClassifier.getDiscreteSpeed(location.getSpeed());
             Track track = new Track();
             track.setDevID(android.os.Build.SERIAL);
             track.setTripID(tripNum);
@@ -53,7 +42,6 @@ public class LocationService extends Service {
             track.setSpeed(location.getSpeed() + "");
             track.setTime(getCurrentTime());
             track.setSent(0);
-            track.setToSend(determineToSend(previousState, currentState, getCurrentTime()));
             trackOperations.addTrack(track);
 
             Log.i("MAIN", "TRACK ADDED TO DB");
@@ -147,25 +135,6 @@ public class LocationService extends Service {
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
-    }
-
-    //Determines whether a track should be sent based on HMM properties
-    private int determineToSend(int lastHiddenState, int hiddenState, String time) {
-        int toSend;
-        char lastChar = time.charAt(time.length() - 1);
-        if(lastHiddenState == STOPPED && hiddenState == STOPPED){
-            toSend = FALSE;
-            //sends first and last stopped
-        }
-        else if(lastHiddenState == FREEFLOW && hiddenState == FREEFLOW && ( lastChar != '0')){
-            toSend = FALSE;
-            //sends 1 in 10 freeflow
-        }
-        else{
-            toSend = TRUE;
-            //sends all acceleration
-        }
-        return toSend;
     }
 
     //Returns a string containing the device's time

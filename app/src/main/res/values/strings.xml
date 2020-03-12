@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">gps_log</string>
-    <string name="start_button_text">Start Logging</string>
-    <string name="stop_button_text">Stop Logging</string>
-    <string name="maps_button_text">Go to Map</string>
+    <string name="begin_tracking_text">Begin Tracking</string>
+    <string name="end_tracking_text">End Tracking</string>
+    <string name="start_commercial_interference_text">Start Commercial</string>
+    <string name="stop_commercial_interference_text">Stop Commercial</string>
+    <string name="start_tnc_interference_text">Start TNC</string>
+    <string name="stop_tnc_interference_text">Stop TNC</string>
+    <string name="start_bike_interference_text">Start Bike</string>
+    <string name="stop_bike_interference_text">Stop Bike</string>
+    <string name="start_ped_interference_text">Start Ped</string>
+    <string name="stop_ped_interference_text">Stop Ped</string>
 </resources>

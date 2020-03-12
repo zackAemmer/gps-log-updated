@@ -1,4 +1,4 @@
-package example.busrecoverytimes;
+package com.example.gps_log;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,7 +29,6 @@ public class TrackOperations {
             DBHelper.COLUMN_SPEED,
             DBHelper.COLUMN_TIME,
             DBHelper.COLUMN_SENT,
-            DBHelper.COLUMN_TOSEND
     };
 
     public TrackOperations(Context context) {
@@ -56,7 +55,6 @@ public class TrackOperations {
         values.put(DBHelper.COLUMN_SPEED, track.getSpeed());
         values.put(DBHelper.COLUMN_TIME, track.getTime());
         values.put(DBHelper.COLUMN_SENT, track.getSent());
-        values.put(DBHelper.COLUMN_TOSEND, track.getToSend());
         database.insert(DBHelper.TABLE_TRACKS, null, values);
         return track;
     }
@@ -76,7 +74,6 @@ public class TrackOperations {
                 currentTrack.put("speed", cursor.getString(4));
                 currentTrack.put("time", cursor.getString(5));
                 currentTrack.put("sent", cursor.getString(6));
-                currentTrack.put("toSend", cursor.getInt(7));
                 finalJson.put(""+i, currentTrack);
             }
             catch (JSONException e) {
@@ -103,7 +100,6 @@ public class TrackOperations {
                 currentTrack.put("speed", cursor.getString(4));
                 currentTrack.put("time", cursor.getString(5));
                 currentTrack.put("sent", cursor.getString(6));
-                currentTrack.put("toSend", cursor.getInt(7));
                 finalJson.put(""+i, currentTrack);
             }
             catch (JSONException e) {
@@ -117,9 +113,8 @@ public class TrackOperations {
     }
 
     public JSONObject getTracksToSend() {
-        //TODO: Make this only pick tracks that the HMM has marked toSend
         JSONObject finalJson = new JSONObject();
-        Cursor cursor = database.query("tracks", allColumns, "sent=0 AND toSend=1", null, null, null, "time");
+        Cursor cursor = database.query("tracks", allColumns, "sent=0", null, null, null, "time");
 
         int i = 0;
         while (cursor.moveToNext()) {
@@ -132,7 +127,6 @@ public class TrackOperations {
                 currentTrack.put("speed", cursor.getString(4));
                 currentTrack.put("time", cursor.getString(5));
                 currentTrack.put("sent", cursor.getString(6));
-                currentTrack.put("toSend", cursor.getInt(7));
                 finalJson.put(""+i, currentTrack);
             }
             catch (JSONException e) {
